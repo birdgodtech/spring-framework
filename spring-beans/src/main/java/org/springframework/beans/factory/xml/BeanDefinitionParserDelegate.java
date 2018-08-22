@@ -540,7 +540,11 @@ public class BeanDefinitionParserDelegate {
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
 
 			parseMetaElements(ele, bd);
+			//   通常称为获取器注入，spring in action中对它的描述是，一种特殊的方法注入，它是把一个方法声明为返回某种类型的bean，
+			// 而实际要返回的bean是在配置文件里面配置的，可用在设计可插拔的功能上，接触程序依赖。
 			parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
+			//可以在运行时用新的方法替换旧的方法。
+			// arg-type处理重载方法
 			parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
 
 			parseConstructorArgElements(ele, bd);
@@ -604,12 +608,12 @@ public class BeanDefinitionParserDelegate {
 
 		String dependencyCheck = ele.getAttribute(DEPENDENCY_CHECK_ATTRIBUTE);
 		bd.setDependencyCheck(getDependencyCheck(dependencyCheck));
-
+         //检查属性
 		if (ele.hasAttribute(DEPENDS_ON_ATTRIBUTE)) {
 			String dependsOn = ele.getAttribute(DEPENDS_ON_ATTRIBUTE);
 			bd.setDependsOn(StringUtils.tokenizeToStringArray(dependsOn, MULTI_VALUE_ATTRIBUTE_DELIMITERS));
 		}
-
+       //自动依赖注入
 		String autowireCandidate = ele.getAttribute(AUTOWIRE_CANDIDATE_ATTRIBUTE);
 		if ("".equals(autowireCandidate) || DEFAULT_VALUE.equals(autowireCandidate)) {
 			String candidatePattern = this.defaults.getAutowireCandidates();
@@ -621,7 +625,7 @@ public class BeanDefinitionParserDelegate {
 		else {
 			bd.setAutowireCandidate(TRUE_VALUE.equals(autowireCandidate));
 		}
-
+       //自动装配时当出现多个Bean候选者时，Primary 为True的Bean将作为首选者，否则将抛出异常
 		if (ele.hasAttribute(PRIMARY_ATTRIBUTE)) {
 			bd.setPrimary(TRUE_VALUE.equals(ele.getAttribute(PRIMARY_ATTRIBUTE)));
 		}
@@ -649,10 +653,14 @@ public class BeanDefinitionParserDelegate {
 				bd.setEnforceDestroyMethod(false);
 			}
 		}
-
+        //通过调用静态工厂方法创建bean,使用<constructor-arg>元素为该方法传递方法参数
 		if (ele.hasAttribute(FACTORY_METHOD_ATTRIBUTE)) {
 			bd.setFactoryMethodName(ele.getAttribute(FACTORY_METHOD_ATTRIBUTE));
 		}
+		//通过调用实例工厂方法创建bean
+		//　　　-在bean的factory-bean属性里指定拥有该工厂方法的bean
+		//　　　-在factory-method属性里指定该工厂方法的名称
+		//　　　-使用constructor-arg元素为工厂方法传递方法参数
 		if (ele.hasAttribute(FACTORY_BEAN_ATTRIBUTE)) {
 			bd.setFactoryBeanName(ele.getAttribute(FACTORY_BEAN_ATTRIBUTE));
 		}
@@ -800,7 +808,7 @@ public class BeanDefinitionParserDelegate {
 				String name = replacedMethodEle.getAttribute(NAME_ATTRIBUTE);
 				String callback = replacedMethodEle.getAttribute(REPLACER_ATTRIBUTE);
 				ReplaceOverride replaceOverride = new ReplaceOverride(name, callback);
-				// Look for arg-type match elements.
+				// Look for arg-type match elements.寻找arg类型的匹配元素
 				List<Element> argTypeEles = DomUtils.getChildElementsByTagName(replacedMethodEle, ARG_TYPE_ELEMENT);
 				for (Element argTypeEle : argTypeEles) {
 					String match = argTypeEle.getAttribute(ARG_TYPE_MATCH_ATTRIBUTE);
