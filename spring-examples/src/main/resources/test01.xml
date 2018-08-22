@@ -10,14 +10,14 @@
  	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <bean id="a" class="com.zp.cycle.CircularityA">
-        <property name="circularityB" ref="b"></property>
+        <constructor-arg type="com.zp.cycle.CircularityB" ref="b"></constructor-arg>
     </bean>
 
     <bean id="b" class="com.zp.cycle.CircularityB">
-        <property name="circularityC" ref="c"></property>
+        <constructor-arg type="com.zp.cycle.CircularityC" ref="c"></constructor-arg>
     </bean>
 
     <bean id="c" class="com.zp.cycle.CircularityC">
-        <property name="circularityA" ref="a"></property>
+        <constructor-arg type="com.zp.cycle.CircularityA" ref="a"></constructor-arg>
     </bean>
 </beans>
