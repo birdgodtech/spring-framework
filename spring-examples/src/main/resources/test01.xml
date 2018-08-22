@@ -8,4 +8,16 @@
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-4.3.xsd
  	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="a" class="com.zp.cycle.CircularityA">
+        <property name="circularityB" ref="b"></property>
+    </bean>
+
+    <bean id="b" class="com.zp.cycle.CircularityB">
+        <property name="circularityC" ref="c"></property>
+    </bean>
+
+    <bean id="c" class="com.zp.cycle.CircularityC">
+        <property name="circularityA" ref="a"></property>
+    </bean>
 </beans>
