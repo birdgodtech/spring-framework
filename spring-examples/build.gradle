@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-
+    compile("org.aspectj:aspectjweaver:${aspectjVersion}")
     compile(project(":spring-core"))
     optional(project(":spring-aop"))
     optional(project(":spring-beans"))
