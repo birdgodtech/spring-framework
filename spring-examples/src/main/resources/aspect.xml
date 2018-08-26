@@ -4,18 +4,25 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
 	http://www.springframework.org/schema/context
-	http://www.springframework.org/schema/context/spring-context-4.3.xsd
+	http://www.springframework.org/schema/context/spring-context-4.2.xsd
  	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <bean class="com.zp.aspect.Test01Aspect" name="test01Aspect"></bean>
+
     <bean class="com.zp.aspect.Test01Def" name="test01Def"></bean>
 
-    <aop:config>
+    <aop:aspectj-autoproxy />
+
+    <context:component-scan base-package="com.zp"></context:component-scan>
+
+
+<!--
+      <bean class="com.zp.aspect.Test01Aspect" name="test02Aspect"></bean>
+        <aop:config>
         <aop:aspect id="TestAspect" ref="test01Aspect">
 
-            <!-- 配置com.spring.service包下所有类或接口的所有方法   -->
+            &lt;!&ndash; 配置com.spring.service包下所有类或接口的所有方法   &ndash;&gt;
             <aop:pointcut id="businessService"
                           expression="execution(* com.zp.aspect.*.*(..))" />
             <aop:before pointcut-ref="businessService" method="doBefore"/>
@@ -23,5 +30,5 @@
             <aop:around pointcut-ref="businessService" method="doAround"/>
             <aop:after-throwing pointcut-ref="businessService" method="doThrowing" throwing="ex"/>
         </aop:aspect>
-    </aop:config>
+    </aop:config>-->
 </beans>

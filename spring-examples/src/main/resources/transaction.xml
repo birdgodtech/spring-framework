@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       default-autowire="byName"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+    <!-- 引入db.properties文件 -->
+    <context:property-placeholder location="classpath:db.properties"/>
+    <!-- 生成连接池 -->
+
+    <bean class="com.zaxxer.hikari.HikariDataSource" id="dataSourcea">
+        <constructor-arg>
+            <bean class="com.zaxxer.hikari.HikariConfig">
+                <property name="driverClassName" value="${driverClass}"></property>
+                <property name="jdbcUrl" value="${jdbcUrl}"></property>
+                <property name="username" value="${username}"></property>
+                <property name="password" value="${password}"></property>
+                <property name="maximumPoolSize" value="${maxPoolSize}"></property>
+                <property name="minimumIdle" value="${minPoolSize}"></property>
+            </bean>
+        </constructor-arg>
+
+    </bean>
+    <!-- 生成JdbcTemplate -->
+    <bean class="org.springframework.jdbc.core.JdbcTemplate" id="jdbcTemplate">
+        <property name="dataSource" ref="dataSourcea"></property>
+    </bean>
+    <!-- 配置实体类 -->
+
+    <bean name="transactionTest02" class="com.zp.transaction.TransactionTest02">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    <tx:annotation-driven></tx:annotation-driven>
+
+    <!--配置事务管理器 -->
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+        <property name="dataSource" ref="dataSourcea"></property>
+    </bean>
+<!--
+    <bean name="transactionTest01" class="com.zp.transaction.TransactionTest01">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    &lt;!&ndash; 配置事务管理器 &ndash;&gt;
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+        <property name="dataSource" ref="dataSourcea"></property>
+    </bean>
+    <tx:advice id="advice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>&lt;!&ndash; *是对所有方法都加 &ndash;&gt;
+        </tx:attributes>
+    </tx:advice>
+    &lt;!&ndash; 用切点把事务切进去 &ndash;&gt;
+    <aop:config>
+        <aop:pointcut expression="execution(* com.zp.transaction.*.*(..))" id="pointcut"/>
+        <aop:advisor advice-ref="advice" pointcut-ref="pointcut"/>
+    </aop:config>-->
+
+</beans>

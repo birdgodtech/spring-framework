@@ -9,7 +9,9 @@
 	http://www.springframework.org/schema/context/spring-context-4.3.xsd
  	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <bean id="a" class="com.zp.cycle.CircularityA">
+
+
+<!--    <bean id="a" class="com.zp.cycle.CircularityA">
         <constructor-arg type="com.zp.cycle.CircularityB" ref="b"></constructor-arg>
     </bean>
 
@@ -19,5 +21,17 @@
 
     <bean id="c" class="com.zp.cycle.CircularityC">
         <constructor-arg type="com.zp.cycle.CircularityA" ref="a"></constructor-arg>
+    </bean>-->
+
+    <bean id="a" class="com.zp.cycle.CircularityA" scope="prototype">
+        <property name="circularityB" ref="b"></property>
+    </bean>
+
+    <bean id="b" class="com.zp.cycle.CircularityB" scope="prototype">
+        <property name="circularityC" ref="c"></property>
+    </bean>
+
+    <bean id="c" class="com.zp.cycle.CircularityC" scope="prototype">
+        <property name="circularityA" ref="a"></property>
     </bean>
 </beans>
