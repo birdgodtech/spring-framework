@@ -210,8 +210,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 		Assert.notNull(beanName, "'beanName' must not be null");
 		synchronized (this.singletonObjects) {
+			// 1.先从singletonObjects缓存Map获取bean对象
 			Object singletonObject = this.singletonObjects.get(beanName);
 			if (singletonObject == null) {
+				//BeanFactory请求destroy，不能在创建对象的标示
 				if (this.singletonsCurrentlyInDestruction) {
 					throw new BeanCreationNotAllowedException(beanName,
 							"Singleton bean creation not allowed while singletons of this factory are in destruction " +
@@ -220,13 +222,16 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				}
+				//2.验证循环依赖，往singletonsCurrentlyInCreation添加beanName，添加失败，就有循环依赖问题
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
+				//处理循环依赖异常集合
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
 				if (recordSuppressedExceptions) {
 					this.suppressedExceptions = new LinkedHashSet<Exception>();
 				}
 				try {
+					//3.ObjectFactory对象创建bean对象
 					singletonObject = singletonFactory.getObject();
 					newSingleton = true;
 				}
@@ -250,8 +255,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (recordSuppressedExceptions) {
 						this.suppressedExceptions = null;
 					}
+					//4.往singletonsCurrentlyInCreation移除beanName，移除失败，throw IllegalStateException 已创建对象异常
 					afterSingletonCreation(beanName);
 				}
+				//  5.创建bean对象成功，
+				//    singletonObjects添加bean对象,singletonFactories和earlySingletonObjects移除beanName
 				if (newSingleton) {
 					addSingleton(beanName, singletonObject);
 				}
@@ -405,8 +413,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	}
 
 	/**
-	 * Register a dependent bean for the given bean,
-	 * to be destroyed before the given bean is destroyed.
+	 * Register a dependent bean for the given bean, to be destroyed before the given bean is destroyed.
 	 * @param beanName the name of the bean
 	 * @param dependentBeanName the name of the dependent bean
 	 */
