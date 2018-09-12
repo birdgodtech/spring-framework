@@ -534,11 +534,12 @@ public class BeanDefinitionParserDelegate {
 			if (ele.hasAttribute(PARENT_ATTRIBUTE)) {
 				parent = ele.getAttribute(PARENT_ATTRIBUTE);
 			}
+			//创建GenericBeanDefinition
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
-
+            //解析bean元素的属性
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
-
+            //meta 被AttributeAccessor添加
 			parseMetaElements(ele, bd);
 			//   通常称为获取器注入，spring in action中对它的描述是，一种特殊的方法注入，它是把一个方法声明为返回某种类型的bean，
 			// 而实际要返回的bean是在配置文件里面配置的，可用在设计可插拔的功能上，接触程序依赖。
